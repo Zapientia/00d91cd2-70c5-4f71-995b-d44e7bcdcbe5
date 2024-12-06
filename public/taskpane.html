@@ -1,0 +1,240 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. -->
+<!-- This file shows how to design a first-run page that provides a welcome screen to the user about the features of the add-in. -->
+
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Load jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+    <!-- Solution -->
+  <script type="module" src="taskpane.min.js"></script>
+
+  <!-- Office JavaScript API -->
+  <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+
+  <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui#/. -->
+  <link rel="stylesheet"
+    href="https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/office-ui-fabric-core/11.1.0/css/fabric.min.css" />
+
+  <!-- Template styles -->
+  <link href="taskpane.css" rel="stylesheet" type="text/css" />
+
+  <!-- Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+</head>
+
+<body>
+  <div class="container">
+    <div id="loadingOverlay" class="loading-overlay">
+      <div class="spinner"></div>
+      <h2 class="loading-text" id="loadingText"></h2>
+    </div>
+    <div class="column">
+      <div class="row" style="
+            align-items: center;
+            width: 95%;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            text-align: center;
+          ">
+        <h1 id="title"></h1>
+        <span id="gear-icon" class="material-symbols-outlined">settings</span>
+        <div id="overlay" class="overlay">
+          <div class="overlay-content">
+            <div class="row between" style="align-items: center">
+              <h2 id="configurationTitle"></h2>
+              <span id="close-overlay" class="material-symbols-outlined">close</span>
+            </div>
+            <div class="column">
+              <div class="row" style="justify-content: start; align-items: center;">
+                <input type="checkbox" class="checkbox" id="toggleOverwriteSheets" />
+                <label id="overwriteConfig"></label>
+              </div>
+              <div class="row" style="justify-content: start; align-items: center;">
+                <input type="checkbox" id="toggleMultipleSheets"/>
+                <label id="separateSheetsConfig" style="text-align: start"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stepper">
+        <div class="step-stepper active">
+          <div class="circle"></div>
+          <h2 class="label wrap" id="firstStepTitle"></h2>
+        </div>
+        <div class="step-stepper">
+          <div class="circle"></div>
+          <h2 class="label wrap" id="secondStepTitle"></h2>
+        </div>
+        <div class="step-stepper">
+          <div class="circle"></div>
+          <h2 class="label" id="thirdStepTitle"></h2>
+        </div>
+      </div>
+
+      <div id="step1" class="step active">
+        <div class="selectionDiv">
+          <div class="row" style="align-items: center; justify-content: space-between">
+            <h2 id="selectTables" style="align-self: center"></h2>
+            <span id="refreshBtn" class="material-symbols-outlined">refresh</span>
+          </div>
+          <div class="column">
+            <div class="column">
+              <select class="select" title="Select sheet" id="sheetsDropdown" placeholder="Select sheet"></select>
+              <div class="row" style="justify-content: start; gap: 0; align-items: center; padding-left: 0.5rem; width: unset;">
+                <span class="vertical-small-line"></span>
+                <span class="horizontal-small-line"></span>
+                <select class="select" title="Select table" id="tablesDropdown"></select>
+              </div>
+            </div>
+            <div class="column">
+              <select class="select" title="Select sheet" id="sheetsDropdown2" placeholder="Select sheet"></select>
+              <div class="row" style="justify-content: start; gap: 0; align-items: center; padding-left: 0.5rem; width: unset;">
+                <span class="vertical-small-line"></span>
+                <span class="horizontal-small-line"></span>
+                <select class="select" title="Select table" id="tablesDropdown2"></select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="selectionDiv">
+          <h2 id="selectReportColumns"></h2>
+          <div class="column">
+            <div class="column" style="align-items: start">
+              <select class="select" title="Select column" id="totalColumnDropdown"></select>
+            </div>
+            <div class="column" style="align-items: start">
+              <select class="select" title="Select column" id="totalColumn2Dropdown"></select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="step2" class="step">
+        <div class="selectionDiv" id="rulesDiv">
+          <div class="row between">
+            <div class="column">
+              <div class="row between" style="align-items: center">
+                <h2 id="newRule"></h2>
+                <span id="newRuleInfo" class="material-symbols-outlined info-icon">info</span>
+              </div>
+              <div class="column" style="gap: 0">
+                <select class="select" title="Select column" id="columnDropdown" style="width: 100%;"></select>
+                <div class="row" style="align-items: center; gap: 0; padding-left: 1rem;">
+                  <span class="vertical-line"></span>
+                  <span class="line"></span>
+                  <select class="select" title="Select operator" id="operatorDropdown"
+                    style="align-self: center; justify-items: center;">
+                    <option value="equals" id="equals"></option>
+                    <option value="contains" id="contains"></option>
+                    <option value="isIncluded" id="isIncluded"></option>
+                  </select>
+                </div>
+                <select class="select" title="Select column" id="columnDropdown2" style="width: 100%;"></select>
+              </div>
+              <div id="variantDiv" class="column">
+                <div class="row between" style="align-items: center">
+                  <h2 id="variantTitle"></h2>
+                  <span id="variantInfo" class="material-symbols-outlined info-icon">info</span>
+                </div>
+                <div class="row" style="min-width: fit-content; align-items: center; justify-content: start">
+                  <select class="select selectVariant" title="Select comparer" id="variantOperator">
+                    <option value="" id="none">N/A</option>
+                    <option value="less" id="less">-</option>
+                    <option value="more" id="more">+</option>
+                    <option value="moreOrLess" id="moreOrLess">+ / -</option>
+                  </select>
+                  <input class="input" type="number" id="variantInput"
+                    style="width: 4rem !important; min-width: 4rem;" />
+                  <select class="select selectVariant" title="Select variant" id="variantOptions">
+                    <option value="percentage" id="percentage"></option>
+                    <option value="value" id="value"></option>
+                    <option value="days" id="days"></option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="buttons">
+            <button id="addRuleBtn" class="first-run-button">Add to first run</button>
+            <button id="addRuleSecondBtn" class="second-run-button">Add to second run</button>
+          </div>
+        </div>
+        <div class="selectionDiv">
+          <div class="row" style="align-items: start">
+            <div class="column">
+              <div class="row between" style="align-items: center; width: 100%">
+                <h2 id="existingRules"></h2>
+                <span id="existingRulesInfo" class="material-symbols-outlined info-icon">info</span>
+              </div>
+              <div id="rulesDropdownRow" class="row"
+                style="align-items: center; gap: 1rem; width: 100%; justify-content: start">
+                <select class="select empty-option" title="Select rule set" id="rulesDropdown"></select>
+                <span id="saveStorageRulesBtn" class="material-symbols-outlined info-icon"
+                  style="color: var(--success-color)">
+                  save
+                </span>
+                <span id="deleteSavedRuleBtn" class="material-symbols-outlined info-icon" style="color: gray">
+                  delete
+                </span>
+              </div>
+              <div id="rulesCreateRow" class="row hide"
+                style="align-items: center; gap: 1rem; width: 100%; justify-content: start">
+                <input class="input" id="rulesName" type="text" />
+                <span id="saveCreateRow" class="material-symbols-outlined info-icon"
+                  style="color: var(--success-color)">
+                  add
+                </span>
+                <span id="closeCreateRow" class="material-symbols-outlined info-icon" style="color: gray">
+                  close
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="column" style="justify-content: start">
+            <div class="column" style="justify-content: start">
+              <div class="row between">
+                <h2 id="rules" style="color: var(--first-run)"></h2>
+                <p id="clearRules" class="clearText">Clear</p>
+              </div>
+              <ul id="rulesList"></ul>
+            </div>
+            <div class="column" style="justify-content: start">
+              <div class="row between">
+                <h2 id="rulesSecond" style="color: var(--second-run)"></h2>
+                <p id="clearRulesSecond" class="clearText"></p>
+              </div>
+              <ul id="rulesSecondList"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="step3" class="step">
+        <div class="selectionDiv" id="resultsDiv" style="justify-content: center; text-align: center">
+          <div class="column" style="justify-content: center; gap: 0.5rem; align-items: center;">
+            <h3 id="percentageMatched" class="success"></h3>
+            <label id="totalTime"></label>
+            <label id="analizedLines"></label>
+          </div>
+          <canvas id="lineChart" width="400" height="100"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="buttons center" style="margin-top: 1rem">
+      <button class="secondary" id="backBtn" onclick="changeStep(-1)" disabled>Back</button>
+      <button id="nextBtn" onclick="changeStep(1)">Next</button>
+    </div>
+  </div>
+
+  </div>
+</body>
+
+</html>
