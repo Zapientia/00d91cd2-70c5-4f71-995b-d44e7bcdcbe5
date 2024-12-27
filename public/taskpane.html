@@ -62,6 +62,14 @@
                 <input type="checkbox" id="toggleMultipleSheets"/>
                 <label id="separateSheetsConfig" style="text-align: start"></label>
               </div>
+              <div class="row" style="justify-content: start; align-items: center;">
+                <input type="checkbox" id="toggleAutoformat"/>
+                <label id="autoformatConfig" style="text-align: start"></label>
+              </div>
+              <div class="row" style="justify-content: start; align-items: center;">
+                <input type="checkbox" id="toggleMultipleMatch"/>
+                <label id="allowMultipleMatchConfig" style="text-align: start"></label>
+              </div>
             </div>
           </div>
         </div>
@@ -164,8 +172,7 @@
             </div>
           </div>
           <div class="buttons">
-            <button id="addRuleBtn" class="first-run-button">Add to first run</button>
-            <button id="addRuleSecondBtn" class="second-run-button">Add to second run</button>
+            <button id="addRuleBtn">Add</button>
           </div>
         </div>
         <div class="selectionDiv">
@@ -202,17 +209,10 @@
           <div class="column" style="justify-content: start">
             <div class="column" style="justify-content: start">
               <div class="row between">
-                <h2 id="rules" style="color: var(--first-run)"></h2>
+                <h2 id="rules"></h2>
                 <p id="clearRules" class="clearText">Clear</p>
               </div>
               <ul id="rulesList"></ul>
-            </div>
-            <div class="column" style="justify-content: start">
-              <div class="row between">
-                <h2 id="rulesSecond" style="color: var(--second-run)"></h2>
-                <p id="clearRulesSecond" class="clearText"></p>
-              </div>
-              <ul id="rulesSecondList"></ul>
             </div>
           </div>
         </div>
